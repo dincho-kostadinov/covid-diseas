@@ -9,7 +9,9 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.12.1",
     "@nuxtjs/vuetify": "^1.11.2",
+    "axios": "^0.19.2",
     "nuxt": "^2.14.0"
   },
   "devDependencies": {}
