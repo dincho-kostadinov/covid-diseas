@@ -1,21 +1,14 @@
 <template>
   <div>
-    <h1 class="title">Tracking Coronavirus (COVID-19)</h1>
+    <h1 class="title">Tracking Coronavirus (COVID-19) for</h1>
 
-    <dashboardCard title="Confirmed" :results="CardData.cases"></dashboardCard>
-    <dashboardCard
-      title="Recovered"
-      :results="CardData.recovered"
-    ></dashboardCard>
-    <dashboardCard title="Deaths" :results="CardData.deaths"></dashboardCard>
-    <dashboardCard title="Active" :results="CardData.active"></dashboardCard>
     <v-btn small v-on:click="getTodayData">Today</v-btn>
     <v-btn small v-on:click="getYesterdayData">Yesterday</v-btn>
     <v-btn small v-on:click="getTwoDaysAgoData">Before 2 days</v-btn>
     <v-data-table
       :headers="headers"
-      :items="countries"
-      :items-per-page="15"
+      :items="[countrieDeatils]"
+      :items-per-page="1"
       @click:row="handleClick"
       class="elevation-1"
     ></v-data-table>
@@ -25,7 +18,7 @@
 <script>
 const axios = require("axios");
 const $router = require("vue-router");
-import dashboardCard from "../components/dashboard/dashboard-card.vue";
+import dashboardCard from "../../components/dashboard/dashboard-card";
 export default {
   data() {
     return {
@@ -43,8 +36,7 @@ export default {
         { text: "Total Recovered", value: "recovered" },
         { text: "Active Cases", value: "active" }
       ],
-      countries: [],
-      CardData: {}
+      countrieDeatils: {}
     };
   },
   components: {
@@ -53,9 +45,11 @@ export default {
   methods: {
     getYesterdayData: function() {
       axios
-        .get(`https://disease.sh/v3/covid-19/countries?yesterday=true`)
+        .get(
+          `https://disease.sh/v3/covid-19/countries/Afghanistan?strict=true?yesterday=true`
+        )
         .then(response => {
-          this.countries = response.data;
+          this.countrieDeatils = response.data;
         })
         .catch(e => {
           this.errors.push(e);
@@ -63,9 +57,11 @@ export default {
     },
     getTwoDaysAgoData: function() {
       axios
-        .get(`https://disease.sh/v3/covid-19/countries?twoDaysAgo=true`)
+        .get(
+          `https://disease.sh/v3/covid-19/countries/Afghanistan?strict=true?twoDaysAgo=true`
+        )
         .then(response => {
-          this.countries = response.data;
+          this.countrieDeatils = response.data;
         })
         .catch(e => {
           this.errors.push(e);
@@ -73,30 +69,20 @@ export default {
     },
     getTodayData: function() {
       axios
-        .get(`https://disease.sh/v3/covid-19/countries`)
+        .get(`https://disease.sh/v3/covid-19/countries/Afghanistan?strict=true`)
         .then(response => {
-          this.countries = response.data;
+          this.countrieDeatils = response.data;
         })
         .catch(e => {
           this.errors.push(e);
         });
     },
     handleClick: function(value) {
-      this.$router.push({ path: `/countryDetails/${value.country}` })
       console.log(value);
     }
   },
   created() {
     this.getTodayData();
-
-    axios
-      .get(`https://disease.sh/v3/covid-19/all`)
-      .then(response => {
-        this.CardData = response.data;
-      })
-      .catch(e => {
-        this.errors.push(e);
-      });
   }
 };
 </script>
