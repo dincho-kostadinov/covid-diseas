@@ -1,82 +1,81 @@
 <template>
+  <div>
+    <h1 class="title">Tracking Coronavirus (COVID-19)</h1>
+
+    <dashboardCard title="Confirmed" :results="CardData.cases"></dashboardCard>
+    <dashboardCard
+      title="Recovered"
+      :results="CardData.recovered"
+    ></dashboardCard>
+    <dashboardCard title="Deaths" :results="CardData.deaths"></dashboardCard>
+    <dashboardCard title="Active" :results="CardData.active"></dashboardCard>
     <v-data-table
-    :headers="headers"
-    :items="countries"
-    :items-per-page="15"
-    class="elevation-1"
-  ></v-data-table>
+      :headers="headers"
+      :items="countries"
+      :items-per-page="15"
+      class="elevation-1"
+    ></v-data-table>
+  </div>
 </template>
 
 <script>
-const axios = require('axios');
+const axios = require("axios");
+import dashboardCard from "../components/dashboard/dashboard-card.vue";
 export default {
-    data () {
-      return {
-        headers: [
-          {
-            text: 'Country',
-            align: 'start',
-            sortable: false,
-            value: 'country',
-          },
-          { text: 'Total cases', value: 'cases' },
-          { text: 'New Cases', value: 'todayCases' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' },
-        ],
-        countries:[],
-      }
-    },
-   created() {
-    axios.get(`https://disease.sh/v3/covid-19/countries`)
-    .then(response => {
-      this.countries = response.data
-    })
-    .catch(e => {
-      this.errors.push(e)
-    })
+  data() {
+    return {
+      headers: [
+        {
+          text: "Id",
+          align: "start",
+          sortable: false,
+          value: "countryInfo._id"
+        },
+        {
+          text: "Country",
+          align: "start",
+          sortable: false,
+          value: "country"
+        },
+        { text: "Total cases", value: "cases" },
+        { text: "New Cases", value: "todayCases" },
+        { text: "Total Deaths", value: "deaths" },
+        { text: "New Deaths", value: "todayDeaths" },
+        { text: "Total Recovered", value: "recovered" },
+        { text: "Active Cases", value: "active" }
+      ],
+      countries: [],
+      CardData: {}
+    };
+  },
+  components: {
+    dashboardCard: dashboardCard
+  },
+  created() {
+    axios
+      .get(`https://disease.sh/v3/covid-19/countries`)
+      .then(response => {
+        this.countries = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
 
-  }}
+    axios
+      .get(`https://disease.sh/v3/covid-19/all`)
+      .then(response => {
+        this.CardData = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+  }
+};
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
+.title {
   display: flex;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
 }
 </style>
