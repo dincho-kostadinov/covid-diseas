@@ -9,6 +9,9 @@
     ></dashboardCard>
     <dashboardCard title="Deaths" :results="CardData.deaths"></dashboardCard>
     <dashboardCard title="Active" :results="CardData.active"></dashboardCard>
+    <v-btn small v-on:click="getTodayData">Today</v-btn>
+    <v-btn small v-on:click="getYesterdayData">Yesterday</v-btn>
+    <v-btn small v-on:click="getTwoDaysAgoData">Before 2 days</v-btn>
     <v-data-table
       :headers="headers"
       :items="countries"
@@ -51,15 +54,40 @@ export default {
   components: {
     dashboardCard: dashboardCard
   },
+  methods: {
+    getYesterdayData: function() {
+      axios
+        .get(`https://disease.sh/v3/covid-19/countries?yesterday=true`)
+        .then(response => {
+          this.countries = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    getTwoDaysAgoData: function() {
+      axios
+        .get(`https://disease.sh/v3/covid-19/countries?twoDaysAgo=true`)
+        .then(response => {
+          this.countries = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    getTodayData: function() {
+      axios
+        .get(`https://disease.sh/v3/covid-19/countries`)
+        .then(response => {
+          this.countries = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    }
+  },
   created() {
-    axios
-      .get(`https://disease.sh/v3/covid-19/countries`)
-      .then(response => {
-        this.countries = response.data;
-      })
-      .catch(e => {
-        this.errors.push(e);
-      });
+    this.getTodayData();
 
     axios
       .get(`https://disease.sh/v3/covid-19/all`)
