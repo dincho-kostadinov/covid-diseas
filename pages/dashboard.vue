@@ -99,7 +99,6 @@ export default {
     },
     handleClick: function(value) {
       this.$router.push({ path: `/countryDetails/${value.country}` });
-      console.log(value);
     }
   },
   created() {

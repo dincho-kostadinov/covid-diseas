@@ -21,7 +21,6 @@
           :headers="headers"
           :items="[countrieDeatils]"
           :items-per-page="1"
-          @click:row="handleClick"
           class="elevation-1"
         ></v-data-table>
       </v-col>
