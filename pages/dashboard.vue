@@ -1,25 +1,55 @@
 <template>
-  <div>
-    <h1 class="title">Tracking Coronavirus (COVID-19)</h1>
-
-    <dashboardCard title="Confirmed" :results="CardData.cases"></dashboardCard>
-    <dashboardCard
-      title="Recovered"
-      :results="CardData.recovered"
-    ></dashboardCard>
-    <dashboardCard title="Deaths" :results="CardData.deaths"></dashboardCard>
-    <dashboardCard title="Active" :results="CardData.active"></dashboardCard>
-    <v-btn small v-on:click="getTodayData">Today</v-btn>
-    <v-btn small v-on:click="getYesterdayData">Yesterday</v-btn>
-    <v-btn small v-on:click="getTwoDaysAgoData">Before 2 days</v-btn>
-    <v-data-table
-      :headers="headers"
-      :items="countries"
-      :items-per-page="15"
-      @click:row="handleClick"
-      class="elevation-1"
-    ></v-data-table>
-  </div>
+  <v-container class="grey lighten-5">
+    <v-row>
+      <v-col>
+        <h1 class="title">Tracking Coronavirus (COVID-19)</h1>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <dashboardCard
+          title="Confirmed"
+          :results="CardData.cases"
+        ></dashboardCard>
+      </v-col>
+      <v-col>
+        <dashboardCard
+          title="Recovered"
+          :results="CardData.recovered"
+        ></dashboardCard>
+      </v-col>
+      <v-col>
+        <dashboardCard
+          title="Deaths"
+          :results="CardData.deaths"
+        ></dashboardCard>
+      </v-col>
+      <v-col>
+        <dashboardCard
+          title="Active"
+          :results="CardData.active"
+        ></dashboardCard>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn small v-on:click="getData">Today</v-btn>
+        <v-btn small v-on:click="getData('yesterday')">Yesterday</v-btn>
+        <v-btn small v-on:click="getData('twoDaysAgo')">Before 2 days</v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-data-table
+          :headers="headers"
+          :items="countries"
+          :items-per-page="15"
+          @click:row="handleClick"
+          class="elevation-1"
+        ></v-data-table>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -51,29 +81,15 @@ export default {
     dashboardCard: dashboardCard
   },
   methods: {
-    getYesterdayData: function() {
+    getData: function(filter) {
+      var url = "";
+      if (filter) {
+        this.url = `https://disease.sh/v3/covid-19/countries?${filter}=true`;
+      } else {
+        this.url = `https://disease.sh/v3/covid-19/countries`;
+      }
       axios
-        .get(`https://disease.sh/v3/covid-19/countries?yesterday=true`)
-        .then(response => {
-          this.countries = response.data;
-        })
-        .catch(e => {
-          this.errors.push(e);
-        });
-    },
-    getTwoDaysAgoData: function() {
-      axios
-        .get(`https://disease.sh/v3/covid-19/countries?twoDaysAgo=true`)
-        .then(response => {
-          this.countries = response.data;
-        })
-        .catch(e => {
-          this.errors.push(e);
-        });
-    },
-    getTodayData: function() {
-      axios
-        .get(`https://disease.sh/v3/covid-19/countries`)
+        .get(this.url)
         .then(response => {
           this.countries = response.data;
         })
@@ -82,12 +98,12 @@ export default {
         });
     },
     handleClick: function(value) {
-      this.$router.push({ path: `/countryDetails/${value.country}` })
+      this.$router.push({ path: `/countryDetails/${value.country}` });
       console.log(value);
     }
   },
   created() {
-    this.getTodayData();
+    this.getData();
 
     axios
       .get(`https://disease.sh/v3/covid-19/all`)
